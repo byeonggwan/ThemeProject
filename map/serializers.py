@@ -33,26 +33,32 @@ class StockSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, max_length=100)
     middle_theme = serializers.SlugRelatedField(many=True, slug_field='title', queryset=Middle.objects.all())
     comments = StockCommentsSerializer(many=True, read_only=True)
+    hot = serializers.BooleanField(read_only=True)
+    memory = serializers.BooleanField(read_only=True)
 
     class Meta:
         model = Stock
-        fields = ('id', 'title', 'middle_theme', 'comments')
+        fields = ('id', 'title', 'middle_theme', 'comments', 'hot', 'memory')
 
 class MiddleSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, max_length=100)
     big_theme = serializers.SlugRelatedField(slug_field='title', queryset=Big.objects.all())
     stock = StockSerializer(many=True, read_only=True)
     comments = MiddleCommentsSerializer(many=True, read_only=True)
-    
+    hot = serializers.BooleanField(read_only=True)
+    memory = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Middle
-        fields = ('id', 'title', 'big_theme', 'stock', 'comments')
+        fields = ('id', 'title', 'big_theme', 'stock', 'comments', 'hot', 'memory')
 
 class BigSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, max_length=100)
     middles = MiddleSerializer(many=True, read_only=True)
     comments = BigCommentsSerializer(many=True, read_only=True)
-    
+    hot = serializers.BooleanField(read_only=True)
+    memory = serializers.BooleanField(read_only=True)
+
     class Meta:
         model = Big
         fields = '__all__'

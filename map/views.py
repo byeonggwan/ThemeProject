@@ -11,6 +11,38 @@ class BigViewSet(viewsets.ModelViewSet):
     queryset = Big.objects.all()
     serializer_class = BigSerializer
 
+    @action(detail=True, methods=['GET'])
+    def heat(self, request, pk):
+        theme = self.get_object()
+        theme.hot = True
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['GET'])
+    def unheat(self, request, pk):
+        theme = self.get_object()
+        theme.hot = False
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['GET'])
+    def forget(self, request, pk):
+        theme = self.get_object()
+        theme.memory = True
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['GET'])
+    def unforget(self, request, pk):
+        theme = self.get_object()
+        theme.memory = False
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+
 class MiddleViewSet(viewsets.ModelViewSet):
     queryset = Middle.objects.all()
     serializer_class = MiddleSerializer
@@ -28,10 +60,73 @@ class MiddleViewSet(viewsets.ModelViewSet):
         except Http404:
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)
+    @action(detail=True, methods=['GET'])
+    def heat(self, request, pk):
+        theme = self.get_object()
+        theme.hot = True
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['GET'])
+    def unheat(self, request, pk):
+        theme = self.get_object()
+        theme.hot = False
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['GET'])
+    def forget(self, request, pk):
+        theme = self.get_object()
+        theme.memory = True
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['GET'])
+    def unforget(self, request, pk):
+        theme = self.get_object()
+        theme.memory = False
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
 
 class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+
+    @action(detail=True, methods=['GET'])
+    def heat(self, request, pk):
+        theme = self.get_object()
+        theme.hot = True
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['GET'])
+    def unheat(self, request, pk):
+        theme = self.get_object()
+        theme.hot = False
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+
+    @action(detail=True, methods=['GET'])
+    def forget(self, request, pk):
+        theme = self.get_object()
+        theme.memory = True
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
+    
+    @action(detail=True, methods=['GET'])
+    def unforget(self, request, pk):
+        theme = self.get_object()
+        theme.memory = False
+        theme.save()
+        serializer = self.get_serializer(theme)
+        return Response(serializer.data)
 
 class BigCommentsViewSet(viewsets.ModelViewSet):
     queryset = BigComments.objects.all()
