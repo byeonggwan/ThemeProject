@@ -1,143 +1,130 @@
 from rest_framework import viewsets, status
 from .models import Big, Middle, Stock, BigComments, MiddleComments, StockComments
 from .serializers import BigSerializer, MiddleSerializer, StockSerializer, BigCommentsSerializer, MiddleCommentsSerializer, StockCommentsSerializer
-from rest_framework.decorators import action
+from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from django.http import Http404
-# Create your views here.
+from rest_framework import mixins, generics
+from rest_framework.views import APIView
+from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer
 
-
-class BigViewSet(viewsets.ModelViewSet):
-    queryset = Big.objects.all()
-    serializer_class = BigSerializer
-
-    @action(detail=True, methods=['patch'])
-    def heat(self, request, pk):
-        theme = self.get_object()
-        theme.hot = True
-        theme.save()
-        serializer = self.get_serializer(theme)
+class BigList(APIView):
+    def get(self, request, format=None):
+        bigs = Big.objects.all()
+        serializer = BigSerializer(bigs, many=True)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['patch'])
-    def unheat(self, request, pk):
-        theme = self.get_object()
-        theme.hot = False
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
+    def post(self, request, format=None):
+        serializer = BigSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @action(detail=True, methods=['patch'])
-    def forget(self, request, pk):
-        theme = self.get_object()
-        theme.memory = True
-        theme.save()
-        serializer = self.get_serializer(theme)
+class MiddleList(APIView):
+    def get(self, request, format=None):
+        middles = Middle.objects.all()
+        serializer = MiddleSerializer(middles, many=True)
         return Response(serializer.data)
-    
-    @action(detail=True, methods=['patch'])
-    def unforget(self, request, pk):
-        theme = self.get_object()
-        theme.memory = False
-        theme.save()
-        serializer = self.get_serializer(theme)
+    def post(self, request, format=None):
+        serializer = MiddleSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StockList(APIView):
+    def get(self, request, format=None):
+        stocks = Stock.objects.all()
+        serializer = StockSerializer(stocks, many=True)
         return Response(serializer.data)
+    def post(self, request, format=None):
+        serializer = StockSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class MiddleViewSet(viewsets.ModelViewSet):
-    queryset = Middle.objects.all()
-    serializer_class = MiddleSerializer
-
-    def destroy(self, request, *args, **kwargs):
+class BigDetail(APIView):
+    def get_object(self, id):
         try:
-            instance = self.get_object()
-            serializer = self.get_serializer(instance)
-            print(serializer.data["stock"])
-            #안에 종목이 없다면 삭제
-            if serializer.data["stock"] == []:
-                self.perform_destroy(instance)
-            else:
-                Response(status=status.HTTP_400_BAD_REQUEST)
-        except Http404:
-            pass
+            return Big.objects.get(id=id)
+        except Big.DoesNotExist:
+            return Http404
+    
+    def get(self, request, id, format=None):
+        big = self.get_object(id)
+        serializer = BigSerializer(big)
+        return Response(serializer.data)
+
+    def put(self, request, id, format=None):
+        big = self.get_object(id)
+        serializer = BigSerializer(big, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, format=None):
+        big = self.get_object(id)
+        big.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
-    @action(detail=True, methods=['patch'])
-    def heat(self, request, pk):
-        theme = self.get_object()
+
+
+
+class MiddleDetail(APIView):
+    def get_object(self, id):
+        try:
+            return Middle.objects.get(id=id)
+        except Middle.DoesNotExist:
+            return Http404
+    
+    def get(self, request, id, format=None):
+        middle = self.get_object(id)
+        serializer = MiddleSerializer(middle)
+        return Response(serializer.data)
+
+    def put(self, request, id, format=None):
+        middle = self.get_object(id)
+        serializer = MiddleSerializer(middle, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, format=None):
+        middle = self.get_object(id)
+        middle.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+class StockDetail(APIView):
+    def get_object(self, id):
+        try:
+            return Stock.objects.get(id=id)
+        except Stock.DoesNotExist:
+            return Http404
+    
+    def get(self, request, id, format=None):
+        stock = self.get_object(id)
+        serializer = StockSerializer(stock)
+        return Response(serializer.data)
+
+    def put(self, request, id, format=None):
+        stock = self.get_object(id)
+        serializer = StockSerializer(stock, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, id, format=None):
+        stock = self.get_object(id)
+        stock.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+def heat(self, request, id):
+        theme = self.get_object(id)
         theme.hot = True
         theme.save()
-        serializer = self.get_serializer(theme)
+        serializer = BigSerializer(theme)
         return Response(serializer.data)
-    
-    @action(detail=True, methods=['patch'])
-    def unheat(self, request, pk):
-        theme = self.get_object()
-        theme.hot = False
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['patch'])
-    def forget(self, request, pk):
-        theme = self.get_object()
-        theme.memory = True
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-    
-    @action(detail=True, methods=['patch'])
-    def unforget(self, request, pk):
-        theme = self.get_object()
-        theme.memory = False
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-
-class StockViewSet(viewsets.ModelViewSet):
-    queryset = Stock.objects.all()
-    serializer_class = StockSerializer
-
-    @action(detail=True, methods=['patch'])
-    def heat(self, request, pk):
-        theme = self.get_object()
-        theme.hot = True
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-    
-    @action(detail=True, methods=['patch'])
-    def unheat(self, request, pk):
-        theme = self.get_object()
-        theme.hot = False
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-
-    @action(detail=True, methods=['patch'])
-    def forget(self, request, pk):
-        theme = self.get_object()
-        theme.memory = True
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-    
-    @action(detail=True, methods=['patch'])
-    def unforget(self, request, pk):
-        theme = self.get_object()
-        theme.memory = False
-        theme.save()
-        serializer = self.get_serializer(theme)
-        return Response(serializer.data)
-
-class BigCommentsViewSet(viewsets.ModelViewSet):
-    queryset = BigComments.objects.all()
-    serializer_class = BigCommentsSerializer
-
-class MiddleCommentsViewSet(viewsets.ModelViewSet):
-    queryset = MiddleComments.objects.all()
-    serializer_class = MiddleCommentsSerializer
-
-class StockCommentsViewSet(viewsets.ModelViewSet):
-    queryset = StockComments.objects.all()
-    serializer_class = StockCommentsSerializer
-
-
