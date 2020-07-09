@@ -42,7 +42,7 @@ class StockSerializer(serializers.ModelSerializer):
 
 class MiddleSerializer(serializers.ModelSerializer):
     title = serializers.CharField(required=True, max_length=100)
-    big_theme = serializers.SlugRelatedField(slug_field='title', queryset=Big.objects.all())
+    big_theme = serializers.SlugRelatedField(slug_field='title', queryset=Big.objects.all(), default='f')
     stock = StockSerializer(many=True, read_only=True)
     comments = MiddleCommentsSerializer(many=True, read_only=True)
     hot = serializers.BooleanField(read_only=True)

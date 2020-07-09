@@ -11,7 +11,7 @@ class BigViewSet(viewsets.ModelViewSet):
     queryset = Big.objects.all()
     serializer_class = BigSerializer
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def heat(self, request, pk):
         theme = self.get_object()
         theme.hot = True
@@ -19,7 +19,7 @@ class BigViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def unheat(self, request, pk):
         theme = self.get_object()
         theme.hot = False
@@ -27,7 +27,7 @@ class BigViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def forget(self, request, pk):
         theme = self.get_object()
         theme.memory = True
@@ -35,7 +35,7 @@ class BigViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def unforget(self, request, pk):
         theme = self.get_object()
         theme.memory = False
@@ -60,7 +60,7 @@ class MiddleViewSet(viewsets.ModelViewSet):
         except Http404:
             pass
         return Response(status=status.HTTP_204_NO_CONTENT)
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def heat(self, request, pk):
         theme = self.get_object()
         theme.hot = True
@@ -68,7 +68,7 @@ class MiddleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def unheat(self, request, pk):
         theme = self.get_object()
         theme.hot = False
@@ -76,7 +76,7 @@ class MiddleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def forget(self, request, pk):
         theme = self.get_object()
         theme.memory = True
@@ -84,7 +84,7 @@ class MiddleViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def unforget(self, request, pk):
         theme = self.get_object()
         theme.memory = False
@@ -96,7 +96,7 @@ class StockViewSet(viewsets.ModelViewSet):
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def heat(self, request, pk):
         theme = self.get_object()
         theme.hot = True
@@ -104,7 +104,7 @@ class StockViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def unheat(self, request, pk):
         theme = self.get_object()
         theme.hot = False
@@ -112,7 +112,7 @@ class StockViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
 
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def forget(self, request, pk):
         theme = self.get_object()
         theme.memory = True
@@ -120,7 +120,7 @@ class StockViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(theme)
         return Response(serializer.data)
     
-    @action(detail=True, methods=['GET'])
+    @action(detail=True, methods=['patch'])
     def unforget(self, request, pk):
         theme = self.get_object()
         theme.memory = False
