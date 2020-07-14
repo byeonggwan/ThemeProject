@@ -4,10 +4,13 @@ from . import views
 from django.conf.urls import url
 
 urlpatterns = [
-    path('big/', views.BigList.as_view()),
-    path('big/<int:id>/', views.BigDetail.as_view()),
-    path('middle/', views.MiddleList.as_view()),
-    path('middle/<int:id>/', views.MiddleDetail.as_view()),
-    path('stock/', views.StockList.as_view()),
-    path('stock/<int:id>/', views.StockDetail.as_view()),
+    path('bigs/', views.BigList.as_view()),
+    path('bigs/<int:big_id>/', views.BigDetail.as_view()),
+    path('bigs/<int:big_id>/comments/', views.BigCommentList.as_view()),
+    path('bigs/<int:big_id>/middles/', views.MiddleList.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/', views.MiddleDetail.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/comments', views.MiddleCommentList.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/', views.StockList.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/<int:stock_id>/', views.StockDetail.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/<int:stock_id>/comments', views.StockCommentList.as_view()),
 ]
