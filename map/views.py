@@ -7,6 +7,7 @@ from django.http import Http404
 from rest_framework import mixins, generics
 from rest_framework.views import APIView
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer, BrowsableAPIRenderer
+from django_filters.rest_framework import DjangoFilterBackend
 
 
 class BigCommentList(APIView):
@@ -54,19 +55,17 @@ class StockCommentList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BigList(APIView):
-    def get(self, request, format=None):
-        bigs = Big.objects.all()
-        serializer = BigsSerializer(bigs, many=True)
-        return Response(serializer.data)
-    
-    def post(self, request, format=None):
-        serializer = BigsSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+class BigList(generics.ListAPIView):
+    model = Big
+    serializer_class = BigsSerializer
 
+    def get_queryset(self):
+        queryset = Big.objects.all()
+        title = self.request.query_params.get('title')
+        if title == None:
+            return queryset
+        queryset = queryset.filter(title=title)
+        return queryset
 
 class MiddleList(APIView):
     def get_object(self, big_id):
@@ -115,7 +114,7 @@ class BigDetail(APIView):
             return Big.objects.get(id=big_id)
         except Big.DoesNotExist:
             return Http404
-    
+
     def get(self, request, big_id, format=None):
         big = self.get_object(big_id)
         serializer = BigSerializer(big)
@@ -186,3 +185,29 @@ class StockDetail(APIView):
         stock.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+
+class BigFindTitle(APIView):
+    def get_object(self, big_title):
+        try:
+            return Big.objects.get(title=big_title)
+        except Big.DoesNotExist:
+            return Http404
+    
+    def get(self, request, big_title, format=None):
+        print("hsdh")
+        big = self.get_object(big_title)
+        serializer = BigSerializer(big)
+        return Response(serializer.data)
+
+    def put(self, request, big_title, format=None):
+        big = self.get_object(big_title)
+        serializer = BigSerializer(big, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, big_title, format=None):
+        big = self.get_object(big_title)
+        big.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

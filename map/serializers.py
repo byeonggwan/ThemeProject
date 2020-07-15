@@ -57,7 +57,7 @@ class MiddlesSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Middle
-        fields = ('id', 'title', 'stock_count', 'comment_count', 'is_hot', 'is_old')
+        fields = ('id', 'title', 'stock_count', 'comment_count', 'is_hot', 'is_old', 'big_theme')
 
     def get_stock_count(self, obj):
         return obj.stocks.count()
