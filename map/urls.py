@@ -10,7 +10,9 @@ urlpatterns = [
     path('bigs/<int:big_id>/middles/', views.MiddleList.as_view()),
     path('bigs/<int:big_id>/middles/<int:middle_id>/', views.MiddleDetail.as_view()),
     path('bigs/<int:big_id>/middles/<int:middle_id>/comments', views.MiddleCommentList.as_view()),
-    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/', views.StockList.as_view()),
-    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/<int:stock_id>/', views.StockDetail.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/', views.StockListinMiddle.as_view()),
+    path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/<int:stock_id>/', views.StockDetailinMiddle.as_view()),
     path('bigs/<int:big_id>/middles/<int:middle_id>/stocks/<int:stock_id>/comments', views.StockCommentList.as_view()),
+    path('stocks/', views.StockList.as_view()),
+    path('stocks/<int:stock_id>/', views.StockDetail.as_view()),
 ]

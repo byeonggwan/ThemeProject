@@ -67,6 +67,13 @@ class BigList(generics.ListAPIView):
         queryset = queryset.filter(title=title)
         return queryset
 
+    def post(self, request, format=None):
+        serializer = BigSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 class MiddleList(APIView):
     def get_object(self, big_id):
         try:
@@ -88,7 +95,7 @@ class MiddleList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StockList(APIView):
+class StockListinMiddle(APIView):
     def get_object(self, middle_id):
         try:
             return Stock.objects.filter(middle_theme=middle_id)
@@ -135,19 +142,19 @@ class BigDetail(APIView):
 
 
 class MiddleDetail(APIView):
-    def get_object(self, middle_id):
+    def get_object(self, big_id, middle_id):
         try:
-            return Middle.objects.get(id=middle_id)
+            return Middle.objects.get(id=middle_id, big_theme=big_id)
         except Middle.DoesNotExist:
             return Http404
     
     def get(self, request, big_id, middle_id, format=None):
-        middle = self.get_object(middle_id)
+        middle = self.get_object(big_id, middle_id)
         serializer = MiddleSerializer(middle)
         return Response(serializer.data)
 
     def put(self, request, big_id, middle_id, format=None):
-        middle = self.get_object(middle_id)
+        middle = self.get_object(big_id, middle_id)
         serializer = MiddleSerializer(middle, data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -155,12 +162,12 @@ class MiddleDetail(APIView):
         return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, big_id, middle_id, format=None):
-        middle = self.get_object(middle_id)
+        middle = self.get_object(big_id, middle_id)
         middle.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-class StockDetail(APIView):
+class StockDetailinMiddle(APIView):
     def get_object(self, stock_id):
         try:
             return Stock.objects.get(id=stock_id)
@@ -194,7 +201,6 @@ class BigFindTitle(APIView):
             return Http404
     
     def get(self, request, big_title, format=None):
-        print("hsdh")
         big = self.get_object(big_title)
         serializer = BigSerializer(big)
         return Response(serializer.data)
@@ -210,4 +216,43 @@ class BigFindTitle(APIView):
     def delete(self, request, big_title, format=None):
         big = self.get_object(big_title)
         big.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class StockList(APIView):
+    def get(self, request, format=None):
+        stocks = Stock.objects.all()
+        serializer = StocksSerializer(stocks, many=True)
+        return Response(serializer.data)
+        
+    def post(self, request, format=None):
+        serializer = StockSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class StockDetail(APIView):
+    def get_object(self, stock_id):
+        try:
+            return Stock.objects.get(id=stock_id)
+        except Stock.DoesNotExist:
+            return Http404
+
+    def get(self, request, stock_id, format=None):
+        stock = self.get_object(stock_id)
+        serializer = StockSerializer(stock)
+        return Response(serializer.data)
+        
+    def put(self, request, stock_id, format=None):
+        stock = self.get_object(stock_id)
+        serializer = StockSerializer(stock, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.error, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, stock_id, format=None):
+        stock = self.get_object(stock_id)
+        stock.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
